@@ -1,0 +1,778 @@
+---
+title: ""
+author: ""
+date: ""
+output: html_document
+---
+
+<P><BR>
+<CENTER>
+<FONT SIZE = 4, COLOR = "#2c32c3">
+<B>Retail Industry Exploratory Data Analysis</B>
+
+<BR>Author: Yu Qiu
+
+<BR>Date: `r format(Sys.time(), "%d %B, %Y")`
+</FONT>
+</CENTER>
+
+```{r, message= FALSE, echo=FALSE, include=FALSE, warning=FALSE}
+#to library the packages needed in this analysis
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(knitr)
+library(readxl)
+library(DT)
+library(RColorBrewer)
+library(patchwork)
+sales2020 <- read_excel("Project6Data.xlsx")
+```
+
+<p><BR>
+<FONT SIZE = 4, COLOR="#A11515"><B>
+Introduction
+</B></FONT>
+
+<FONT SIZE = 3><B>Background</B></FONT>  
+<p><BR>
+The retail industry refers to the sales of products or services to the end-users, which is a combination of different processes (Farfan, 2020). According to Marr, 2015, big data has applied to the whole process in the retail industry, from trends prediction, product demand estimation, price optimization customers’ identification, etc. Since the retail industry is quite competitive and its characteristics, data are significant in this industry (Gabriel Santoro). Big data help retail companies to gain competitive advantages through customer targeting, optimizing process, reducing costs, improving product quality, optimizing the efficiency and accuracy of warehousing and shipping, predicting budgets, forecasting trends, and demands, creating plans, and improving marketing campaigns (Santoro et al., 2019, Marr, 2015). Highly satisfied customers will help retail companies increase their sales and big data could support retails to improve their customer services and do more customization on their products, services s and marketing (Ying et al., 2020).  
+<p>
+Price, product, and convenience are the 3 primary factors to consider when shopping (Sides & Swaminathan, 2021). These 3 factors could be predicted through big data analysis. By data analysis, we could find the fairest price to customers which could drive more sales, estimate the product quality and customers’ expectations according to the losses caused by the return, and figure out the best shipping mode and order priority by the frequency of customers’ choices.  
+<p>
+Based on the above knowledge, this report is to analyze the sales performance of a Store Company in 2020. The main purpose is to identify the primary market which has the best sales performance and find the best-performed product segment for different markets, analyze the ship mode and order priority to predict customers’ expectations on delivery. Also, to be more specific, this report will further explore the performance and opportunities in European market. At the end of the report, I also gave several recommendations to the company based on the result of the analysis.   
+
+<p>
+<FONT SIZE = 3><B>Data set description</B></FONT>  
+
+In this data set, there are 1000 observations and 27 variables. 17 of the variables are categorical which tells the information on details of products, product segments, departments, divisions, markets, regions, countries, ship modes, order priorities, etc. The rest 20 variables are numeric and provide the prices, quantities, discount, shipping cost, total loss, number of returns, net sales, profits, etc.      
+<p>  
+To find the answers to the problems this report aims to solve, I analyzed the 4 categorical variables which are Market, Segment, Order Priority, Ship Mode, and 5 numerical variables which are Total Sales, Price, Net Sales, Total Loss and Shipping Cost. Also, I analyzed the relationships between them.    
+<p>  
+To further explore European Market, in this report, I filtered the European market data out to discover the segment frequency in Europe, and the correlation between price and sales in Europe, also checked whether shipping cost influenced the highest net sales market - Western Europe.  
+
+<p>  
+<FONT SIZE = 3><B>Problem identification</B></FONT>  
+<p>
+To further clarify the objectives of this report, this report addressed 3 problems.
+
+<I><B>P1: Identify the market which has the best net sales performance</B></I>
+
+<B>Reasons:</B> Net sales are the result of the company’s total sales deduct its losses, discounts, allowances (Kenton, 2021). This is an important indicator to measure the company’s performance. It also will directly influence the final profit of the company. Identifying the best net sales performance of the market will help us to predict next year's performance and to see the reasons behind the high net sales and low net sales. Then to make further decisions whether we need to do more investment in a market or we should give up the market or change the strategy to the market.
+
+<I><B>P2: Explore the product segments, which segment has the biggest market size in different markets?</B></I>  
+<p>
+<B>Reasons:</B> Product segments relate to the product portfolio strategy. Companies should have products with various market shares and growth to reach their success, and margins could be used to measure the market share (Henderson, 1970). The market size of the product will be helpful to estimate next year's market potential. Also, the high margin will contribute to the profits. Finding the highest margin product segment will help to optimize the product strategy which could contribute most to the profit.   
+
+<I><B>P3: Discover the price strategy and different products’ market sizes in European market</B></I>   
+<p>
+<B>Reasons:</B> Europe is the second biggest market to this company. Exploring how price and product portfolio has contributed to its sales performance is significant to creating next year’s plan for this market. An optimized price strategy will make customers have more confidence in the products and then purchase more, which will contribute to the total sales and profits ("Pricing Strategy Guide: 7 Types, Examples, & How to Choose", 2021).     
+
+<p> 
+<FONT SIZE = 3><B>Analysis Plan</B></FONT>  
+<p> 
+1) <u>In Task 1 and 2</u>, I analyzed the 5 important numerical variables including the total sales and net sales, these 2 factors are the most important KPI of this report since I am going to find the market which has the best sales performance. By doing descriptive statistics to compare the basic descriptive statistics values like median, mean, standard deviation, range to have a general observation, and then visualize the data by using box plots and histograms, to further observe the center, dispersion, and position of some special values. Preliminary find the clues on the performances and the factors which influence the performances.    
+<p>
+2) <u>In Task 3</u>, I analyzed the 4 main categorical data (Market, Segment, Order Priority, and Ship Mode) to check the market size, product segments market size, and proportions of the order priorities and ship modes. This will give further information on the factors which influenced the net sales.  
+<p>
+3) <u>In Task 4</u>, by checking the total sales of each market, utilizing the dot chart to find the market which has the best net sales performance. Analyzing the mean price per segment to see the price difference of different segments.  Visualizing the median total loss per ship mode to find whether ship mode has caused any losses.  
+<p>
+4) <u>In Task 5</u>, to further explore the Western Europe market which is the market that has the highest net sales globally, I analyzed the average shipping cost to see if the shipping cost has influenced different product segments in this region.  
+<p>
+5) <u>In Task 6</u>, to find more opportunities in Europe, I checked the market size of different segments in the 4 European regions and used a side-by-side bar chart to show the result.  
+<p>
+6) By creating a scatter plot of price and total sales for different segments in Europe, I analyze the price sensitivity of the customers in the European market and try to find the price strategy for this market.   
+<p>
+7) Finally, I created a clustered bar chart to see the segments difference in each market. This will help to give insights on the segment performance in each market and find new opportunities.  
+<p>
+8) In the conclusion part, I summarized the global analysis and give some recommendations to the company to increase their sales performance.  
+
+
+<p><BR>
+<FONT SIZE = 4, COLOR="#A11515"><B>
+Analysis
+</B></FONT>
+
+<P><BR>
+<FONT SIZE = 4, COLOR = "#A11515">
+TASK 1
+</FONT>
+<BR><FONT COLOR="#606060">
+
+```{r}
+#Statistics of total sales, price, shipping cost, total loss, net sales
+meansales <- mean(sales2020$Sales_Total)
+sdsales <- sd(sales2020$Sales_Total)
+rangesales <- max(sales2020$Sales_Total) - min(sales2020$Sales_Total)
+mediansales <- median(sales2020$Sales_Total)
+statsales <- c(meansales, sdsales, rangesales, mediansales)
+
+meanpri <- mean(sales2020$Price)
+sdpri <- sd(sales2020$Price)
+rangepri <- max(sales2020$Price) - min(sales2020$Price)
+medianpri <- median(sales2020$Price)
+statpri <- c(meanpri, sdpri, rangepri, medianpri)
+
+meanship <- mean(sales2020$ShippingCost_Product)
+sdship <- sd(sales2020$ShippingCost_Product)
+rangeship <- max(sales2020$ShippingCost_Product) - min(sales2020$ShippingCost_Product)
+medianship <- median(sales2020$ShippingCost_Product)
+statship <- c(meanship, sdship, rangeship, medianship)
+
+meanloss <- mean(sales2020$Total_loss)
+sdloss <- sd(sales2020$Total_loss)
+rangeloss <- max(sales2020$Total_loss) - min(sales2020$Total_loss)
+medianloss <- median(sales2020$Total_loss)
+statloss <- c(meanloss, sdloss, rangeloss, medianloss)
+
+meannet <- mean(sales2020$Net_Sale)
+sdnet <- sd(sales2020$Net_Sale)
+rangenet <- max(sales2020$Net_Sale) - min(sales2020$Net_Sale)
+mediannet <- median(sales2020$Net_Sale)
+statnet <- c(meannet, sdnet, rangenet, mediannet)
+
+statnum <- rbind(round(statsales, 2), round(statpri, 2), round(statnet,2), round(statloss,2), round(statship,2))
+colnames <- c("Mean", "Standard Deviation", "Range", "Median")
+rownames <- c("Total Sales", "Price", "Net Sales", "Total Loss", "Shipping Cost")
+DT::datatable(statnum, rownames = rownames, colnames = colnames)
+```
+<BP><B>Observations</B> 
+<p>
+1) There are some net sales which extremely high and pull over the mean value. The average net sale is ``2283.54`` and 50% of the total sales are below ``1915.69``. 
+<p>
+2) The net sales performances are variable since we see the net sales range is big.   <p>
+3) The price is positively skewed, this means in some markets/regions, some products have very high prices. The price range is also big.  
+<p>
+4) The Median and mean total sales are higher than the median and mean net sales, this indicates the losses, shipping costs, and discounts have influenced the net sales.    
+<p>
+5) There are some products that have very high losses since the loss is also positively skewed and we see the distribution is spread with a big standard deviation and range.  
+<p>
+6) The shipping cost is negatively skewed, there is some shipping cost that is very low to pull below the average.  
+
+
+<P><BR>
+<FONT SIZE = 4, COLOR = "#A11515">
+TASK 2
+</FONT>
+<BR><FONT COLOR="#606060">
+
+<p><BR>
+<B>2.1 Graphs of Total Sales</B>  
+```{r}
+par(mfcol=c(2,1), cex=0.8, mai=c(0.3,0.1,0.2,0.1), mar=c(2,2,1,1), bty = "n")
+
+# box plot of total sales
+boxplot(sales2020$Sales_Total,
+        horizontal = T,
+        col = "gold",
+        ylim = c(0, 30000),
+        cex.axis = 0.8,
+        main = "Graph1: Total Sales (in US$)")
+text(x= boxplot.stats(sales2020$Sales_Total)$stats,
+     labels = round(boxplot.stats(sales2020$Sales_Total)$stats,0),
+     y = 0.6,
+     cex= 0.6)
+abline(v = mean(sales2020$Sales_Total),
+       col = "red",
+       lwd = 1)
+text(x = mean(sales2020$Sales_Total)+2000,
+     y= 0.8,
+     paste("Mean:", round(mean(sales2020$Sales_Total),0)),
+     col = "red",
+     cex = 0.8,
+     pos = 1)
+
+# histogram of total sales
+hist(sales2020$Sales_Total,
+     breaks = 70,
+     main = "",
+     las=1,
+     col = brewer.pal(8, "Accent"),
+     cex.axis = 0.8,
+     xlim = c(0, 30000))
+
+```
+<p>
+<BP><B>Observations</B>  
+
+1) Most of the sales have very good performance since the right 50% weighs more than the left 50% of values. The right 50% of the values are broader than the left side.  
+<p>
+2) There are several products that have extremely good sales in specific regions, we could see many outliers pull the average value over median value.   
+<p>
+3) The total sales values located between ``500`` and ``3000``are quite compact, we could see from the histogram that the bars between this range are much higher than the rest.   
+<p>
+4) The value between ``1454`` and ``2482`` is quite compact with a narrow box area but very high bins in the histogram. This range of values occupies 25% of the whole total sales values.  
+<p>
+5) 75% of the total sales are over ``1454``.  
+
+
+<p><BR>
+<B>2.2 Graphs of Shipping Cost</B>   
+```{r}
+par(mfcol=c(2,1), cex=0.8, mai=c(0.3,0.1,0.2,0.1), mar=c(2,2,1,1), bty = "n")
+
+boxplot(sales2020$ShippingCost_Product,
+        horizontal = T,
+        col = "#6ADED6",
+        ylim = c(0, 90),
+        cex.axis = 0.8,
+        main = "Graph2: Shipping Cost (in US$)")
+text(x= boxplot.stats(sales2020$ShippingCost_Product)$stats,
+     labels = round(boxplot.stats(sales2020$ShippingCost_Product)$stats,0),
+     y = 0.6,
+     cex= 0.6)
+abline(v = mean(sales2020$ShippingCost_Product),
+       col = "red",
+       lwd = 1)
+text(x = mean(sales2020$ShippingCost_Product),
+     y= 0.8,
+     paste("Mean:", round(mean(sales2020$ShippingCost_Product),0)),
+     col = "red",
+     cex = 0.8,
+     pos = 1)
+
+hist(sales2020$ShippingCost_Product,
+     breaks = 70,
+     main = "",
+     las=1,
+     col = brewer.pal(9, "Paired"),
+     cex.axis = 0.8,
+     xlim = c(0, 90))
+```
+<p>
+<BP><B>Observations</B> 
+<p>
+1) The distribution of the shipping cost is narrow but has long tails on both sides because of the outliers.   
+<p>
+2) There are many low-value outliers that pull down the mean (``37``), and the mean is smaller than the median (``41``). The distribution is negatively skewed.   
+<p>
+3) The middle 50% of the values (between 39 and 42) are very compact.   
+<p>
+4) There is a relatively high bin between 1 and 2, which indicates there are several products that have very low shipping costs.   
+<p>
+5) All the products have a shipping cost since there is no bin between 0 and 1.  
+<p>
+6) There are also several products that have very high shipping costs in specific regions, since we see there are several outliers which are over 80.   
+<p>
+7) 75% of the shipping costs are below ``42``.  
+
+<p><BR>
+<B>2.3 Graphs of Total Loss</B>  
+```{r}
+par(mfcol=c(2,1), cex=0.8, mai=c(0.3,0.1,0.2,0.1), mar=c(2,2,1,1), bty = "n")
+
+boxplot(sales2020$Total_loss,
+        horizontal = T,
+        col = "pink",
+        ylim = c(0, 12000),
+        cex.axis = 0.8,
+        main = "Graph3: Total Loss (in US$)")
+text(x= boxplot.stats(sales2020$Total_loss)$stats,
+     labels = round(boxplot.stats(sales2020$Total_loss)$stats,0),
+     y = 0.6,
+     cex= 0.6)
+abline(v = mean(sales2020$Total_loss),
+       col = "red",
+       lwd = 1)
+text(x = mean(sales2020$Total_loss)+800,
+     y= 0.8,
+     paste("Mean:", round(mean(sales2020$Total_loss),0)),
+     col = "red",
+     cex = 0.8,
+     pos = 1)
+
+hist(sales2020$Total_loss,
+     breaks = 70,
+     main = "",
+     las=1,
+     col = brewer.pal(9, "Set1"),
+     cex.axis = 0.8,
+     xlim = c(0, 12000))
+```
+<p>
+<BP><B>Observations</B>    
+1) There are several loss values which are quite high (``over 2728``) and they pull over the average (``824``) above median (``578``). The distribution is positively skewed which negatively influenced the overall performance (net sales and profits).  
+<p>
+2) There are many loss values which are between 0 and 200, since the bin is much higher than others. This is the lowest loss range.   
+<p>
+3) 75% of the loss values are below ``1105``, and 50% of the values are below ``578``.   
+<p>
+4) 25% of the values are above ``1105``, these loss values are quite high and deserve further analysis to see the reason behind it and whether there are specific products/segments in specific regions have very high returns.  
+
+
+<p><BR>
+<B>2.4 Graphs of Price</B>  
+```{r}
+par(mfcol=c(2,1), cex=0.8, mai=c(0.3,0.1,0.2,0.1), mar=c(2,2,1,1), bty = "n")
+
+boxplot(sales2020$Price,
+        horizontal = T,
+        col = "#D5BBE9",
+        ylim = c(50, 4000),
+        cex.axis = 0.8,
+        main = "Graph4: Price (in US$)")
+text(x= boxplot.stats(sales2020$Price)$stats,
+     labels = round(boxplot.stats(sales2020$Price)$stats,0),
+     y = 0.6,
+     cex= 0.6)
+abline(v = mean(sales2020$Price),
+       col = "red",
+       lwd = 1)
+text(x = mean(sales2020$Price)+300,
+     y= 1.5,
+     paste("Mean:", round(mean(sales2020$Price),0)),
+     col = "red",
+     cex = 0.8,
+     pos = 1)
+
+hist(sales2020$Price,
+     breaks = 70,
+     main = "",
+     las=1,
+     col = brewer.pal(8, "Dark2"),
+     cex.axis = 0.8,
+     xlim = c(50, 4000))
+```
+<p>
+<BP><B>Observations</B>  
+<p>
+1) The distribution of the price is broad.  
+<p>
+2) There are some outliers that are quite high, pulling over the average value. The highest price Is near ``4000``. The distribution is positively skewed.  
+<p>
+3) The price between ``100 and 700`` is quite compact, with more than 75% of the prices located in this range.  
+<p>
+4) The prices between ``100`` and ``150`` which is the lowest price range are relatively compact with a high bin. We may need to find the products and regions which have relatively low prices. This is the lowest price-range among all the products' prices.   
+<p>
+5) 50% of the price located between ``361`` and ``648``, this area is quite compact, especially between ``350`` and ``450``, the bin reaches its peak.    
+
+
+<P><BR>
+<FONT SIZE = 4, COLOR = "#A11515">
+TASK 3
+</FONT>
+<BR><FONT COLOR="#606060"> 
+
+<p><BR>
+<B>3.1 Frequency of Market</B>  
+```{r}
+#To create bar plot
+market <- table(sales2020$Market)
+plot1 <- barplot(market,
+        main = "Bar plot1: Frequency of Market",
+        xlab = "Market",
+        ylab = "Frequency",
+        col = brewer.pal(5, "Spectral"),
+        ylim = c(0,400))
+text(y=market,
+     plot1,
+     market,
+     cex = 0.8,
+     pos = 3)
+
+```
+<p>
+<BP><B>Observations</B>   
+<p>
+1) The Asia Pacific has the highest frequency which indicates the market size and potential are biggest.  
+<p>
+2) Europe and LATAM also have relatively high market frequency, which means a large part of the products were sold there.   
+<p>
+3) Africa market has the lowest frequency and it is lower than ``100``, which reflects that the market in Africa is currently quite small. We might need to find more opportunities there or give up that market, further analysis needs to be made like the net sales and profits of each market.  
+<p>
+4) USCA market has a frequency of ``170``, which is not very bad, and still deserves a focus to see whether there is more market potential.   
+
+
+<p><BR>
+<B>3.2 Frequency of Segment</B>
+```{r}
+segment <- table(sales2020$Segment)
+plot2 <- barplot(segment,
+        main = "Bar plot2: Frequency of Segment",
+        xlab = "Segment",
+        ylab = "Frequency",
+        col = brewer.pal(3, "Accent"),
+        ylim = c(0,600),
+        space = 0.4)
+text(y=segment,
+     plot2,
+     segment,
+     cex = 0.8,
+     pos = 3)
+```
+<p>
+<BP><B>Observations</B> 
+<p>
+1) Consumer segment has the highest frequency (``553`), which means globally it has a big market and sold the most. It might also  because this segment has more product varieties which contributed to the big quantity.  
+<p>
+2) Following the consumer segment, corporate also has a relatively high frequency, but is the only half quantity of the consumer segment.  
+<p>
+3) Home office has the lowest frequency which might need to explore more market opportunities for it or have more product varieties.   
+
+
+<p><BR>
+<B>3.3 Counts of Order Priority</B>  
+```{r}
+#to create pie chart
+orderpri <- table(sales2020$OrderPriority)
+orderpriProb <- orderpri/nrow(sales2020)*100
+pielabels = paste(unique(sort(sales2020$OrderPriority)),
+                  "Order",
+                  "\n",
+                  "n=",
+                  orderpri,
+                  "\n",
+                  round(orderpriProb,1),
+                  "%")
+pie1 <- pie(orderpri,
+        labels = pielabels,
+        radius = 0.8,
+        col = brewer.pal(4, "Accent"),
+        border = "white",
+        lty = 1,
+        cex = 0.9,
+        font =3,
+        main = "Pie 1: Count of Order Priority")
+
+```
+<p>
+<BP><B>Observations</B>  
+<p>
+1) Median order occupies the biggest part of the whole orders, which is over ``50%``. This means globally, most people prefer medium order. 
+<p>
+2) High order also has a large proportion, which is ``34.2%``. This might be because people want a faster delivery but a reasonable price for shipping.  
+<p>
+3) Low order has the least frequency which only occupies ``4.5%``. This reflects that very few people are willing to wait for their products for a long time. This might cause a return if customers wait for too long.    
+<p>
+4) Critical order also has a relatively small ratio, this might because people are price-sensitive when considering shipping costs.  
+
+
+<p><BR>
+<B>3.4 Counts of Ship Mode</B> 
+```{r}
+shipmode <- table(sales2020$ShipMode)
+shipmodeProb <- shipmode/nrow(sales2020)*100
+pielabels = paste(unique(sort(sales2020$ShipMode)),
+                  "Ship Mode",
+                  "\n",
+                  "n=",
+                  shipmode,
+                  "\n",
+                  round(shipmodeProb,1),
+                  "%")
+pie2 <- pie(shipmode,
+        labels = pielabels,
+        radius = 0.8,
+        col = brewer.pal(4, "Pastel2"),
+        border = "white",
+        lty = 1,
+        cex = 0.9,
+        font =3,
+        main = "Pie 2: Count of Ship Mode")
+```
+<p>
+<BP><B>Observations</B>  
+<p>
+1) Most customers chose Standard class ship mode which occupies ``55.1%``.  
+<p>
+2) The second and first-class ship modes have a similar frequency, their proportions are between 18% to 20%.  
+<p>
+3) Same-day ship mode has the smallest occupation, this might also be because people are price sensitive to shipping.  
+
+
+<P><BR>
+<FONT SIZE = 4, COLOR = "#A11515">
+TASK 4
+</FONT>
+<BR><FONT COLOR="#606060"> 
+
+<p><BR>
+<B>4.1 Q1. Which market has the highest total net sales?</B>
+<p>
+<I><B>Logic:</B></I>    
+<p>
+This question is important to find the market which has the best net sales performance. Also, we could compare it with the market frequency to see whether they are positively correlated.   
+
+```{r, warning=FALSE}
+#to create dot chart
+sumnet <- tapply(sales2020$Net_Sale, INDEX = sales2020$Market, sum)
+matrix <- as.matrix(sumnet)
+colnames(matrix) <- c( "Total Net Sales")
+chart1 <- dotchart(sumnet/100,
+                 main = "Chart1: Total Net Sales of each Market",
+                 ylab = "Market",
+                 xlab = "Total Net Sales(in US$*100)",
+                 row.names(sumnet),
+                 col = brewer.pal(5, "Set1"),
+                 pch =16,
+                 frame.plot = T,
+                 cex = 0.8,
+                 ylim = c(0, 8000))
+
+```
+<p>
+<BP><B>Observations</B>  
+<p>
+1) From the graph, we could see that the Asia Pacific has the highest net sales which are over ``700000``, followed by the European market which has net sales closer to ``700000``.  
+<p>
+2) Africa has the lowest net sales which are lower than ``100000``, its total profit is far behind the Asia Pacific and Europe.   
+<p>
+3) LATAM has a medium performance on profit which is closer to ``500000``.  
+<p>
+4) USCA market also has a relatively low profit, which is just over ``200000``.  
+<p>
+5) The overall performance of net sales in different markets is consistent with the frequency of the market. Therefore, we could see the bigger the market, the higher the net sales.  
+
+
+<p><BR>
+<B>4.2 Q2. What is the average price per segment? </B>  
+<I><B>Logic:</B></I>    
+<p> 
+The price usually influences the sales. Different product segments may need different price strategies. By checking the average price of each segment, we could see whether there is a big difference, how the average price influences the sales, and whether consumers are sensitive when shopping for different segments.      
+
+```{r}
+averpri <- tapply(sales2020$Price, INDEX = sales2020$Segment, mean)
+
+plot4 <- barplot(averpri,
+                 main = "Plot4: Average Price per Segment",
+                 xlab = "Segment",
+                 ylab = "Average Price (US$)",
+                 las = 1,
+                 col = brewer.pal(4, "Accent"),
+                 cex.axis = 0.8,
+                 cex.names = 0.8,
+                 ylim = c(0, 700),
+                 space= 0.4)
+text(y = round(averpri,2),
+     plot4,
+     round(averpri,2),
+     cex = 0.8,
+     pos = 3)
+```
+<p>
+<BP><B>Observations</B>  
+<p>
+1) The average price of the 3 segments is similar, with the home office having the highest average price ``572.73`` and the consumer having the lowest average price ``533.08``.  
+<p>
+2) Compare with the Bar plot2: Frequency of the segments, we could see that although consumer has the lowest average price, but it has the highest frequency, the quantity of consumer products sold would make consumer products contribute more to net sales. However, it would also need further analysis on the losses.   
+
+
+
+<p><BR>
+<B>4.3 Q3. How is the distribution of the median total loss per ship mode</B>  
+<I><B>Logic:</B></I>   
+<p> 
+The loss caused by the return may have different reasons. It may be because the quality of the products did not meet customers' expectations. It also may be because the delivery took a long time and customers do not want to wait for it. The distribution of the median total loss per ship mode could help to figure out whether there is a ship mode that has an extreme loss value. This indicates that ship mode may have some problems and need to be optimized.   
+
+```{r}
+medianloss <- tapply(sales2020$Total_loss, INDEX = sales2020$ShipMode, median)
+
+plot5 <- boxplot(medianloss,
+                 main = "Plot5: Median Total Loss per Ship Mode",
+                 ylab = "Average Total Sales",
+                 las = 1,
+                 col = "gold",
+                 ylim = c(200, 800))
+
+text(boxplot.stats(medianloss)$stats,
+     labels = round(boxplot.stats(medianloss)$stats,2),
+     x = 1.3,
+     cex= 0.6)
+abline(h = mean(medianloss),
+       col = "red",
+       lwd = 1)
+text(y = mean(medianloss),
+     x= 0.6,
+     paste("Mean:", round(mean(medianloss),2)),
+     col = "red",
+     cex = 0.8,
+     pos = 1)
+
+
+```
+<p>
+<BP><B>Observations</B>    
+<p>
+1) The distribution of the median total loss per ship mode is narrow, which means overall, there are not very big differences in losses among these ship modes.  
+<p>
+2)  The distribution of the median total loss per ship mode is positively skewed, the mean values are higher than the median value. This means there is a 1 or 2 median total loss that is comparatively higher than others and it pulls over the average number.   
+<p>
+3) From the comparison of the median total loss per ship mode, we could preliminary infer that the ship mode generally did not cause the losses, but there are still possibilities that there are some outliers of specific products in specific regions that caused the losses since the median values only reflect the center of those values.  
+
+
+<P><BR>
+<FONT SIZE = 4, COLOR = "#A11515">
+TASK 5
+</FONT>
+<BR><FONT COLOR="#606060">   
+<B>Question: What is the average shipping cost per Segment?  
+Region: West Europe</B>  
+
+From observation, western Europe has the highest total net sale, so I chose Western Europe to have further analysis on its shipping cost to see whether the high net sale is because of the very low shipping costs.  
+
+```{r}
+we <- filter(sales2020, Region == "Western Europe")
+
+segship <- tapply(we$ShippingCost_Product, INDEX = we$Segment, mean)
+
+knitr::kable(round(segship, 2), col.names = "Average Shipping Cost",
+             caption = "<center><strong>Average Shipping Cost per Segment in Western Europe</center></strong>") 
+
+plot6 <- barplot(segship,
+                 main = "Average Shipping Cost per Segment in Western Europe",
+                 xlab = "Segment",
+                 ylab = "Average Shipping Cost",
+                 space = 0.4,
+                 col = brewer.pal(3, "Set3"),
+                 ylim = c(0, 50),
+                 las =1,
+                 cex.axis = 0.7,
+                 cex.names = 0.8)
+text(y = round(segship,2),
+     plot6,
+     round(segship,2),
+     cex = 0.8,
+     pos = 3)
+```
+<p>
+<BP><B>Observations</B>    
+<p>
+From the table and graph, we could see  
+<p>
+1) The average shipping cost of consumer, corporate, and home office segments are ``40.97``, ``40.7``, and ``47`` accordingly.   
+<p>
+2) The 3 segments have very close average shipping cost values in Europe.  
+<p>
+3) Compare with the overall average ship cost in Task 1 (``36.55``), the three segments’ average shipping costs are all higher than it. This means the shipping cost is not low in Western Europe compared with other regions.  
+<p>
+4) Since Western Europe has extremely high total net sales, we could see the prices and total sales must be high and the total loss should be low in Western Europe which created high net sales. 
+
+
+<P><BR>
+<FONT SIZE = 4, COLOR = "#A11515">
+TASK 6
+</FONT>
+<BR><FONT COLOR="#606060">  
+
+<p><BR>
+<B>6.1 Q1. Segment Frequency in the 4 Europe Regions</B>  
+
+```{r}
+#to create a side-by-side bar chart
+euro <- filter(sales2020, Market == "Europe")
+ggplot(euro) + geom_bar(mapping = aes(x = Region, fill = Segment), position ="dodge")
+```
+<p>
+<BP><B>Observations</B>    
+<p>
+Focus on the European market, we could find that   
+<p>
+1) Western Europe has the biggest market size, with the largest amount of goods sold. This has explained the reason why Western Europe has very high net sales. 
+<p>
+2) The 3 segments all were sold the highest number in Western Europe.  
+<p>
+3) In Southern Europe, the corporate is the most favorable product segment, followed by consumer one.  
+<p>
+4) In Northern and Eastern Europe, the consumer segment has the biggest market size.  
+<p>
+5) Compare with consumer and corporate segment, the home office has a relatively small market size in Northern, Southern, and Western Europe, while in Eastern Europe, it has a bigger market size than Corporate.  
+
+<p><BR>
+<B>6.2 Q2.The correlation between price and total sales in Europe Market</B>  
+
+```{r, warning=FALSE, message=FALSE}
+#to create a scatter plot
+ggplot(euro, aes(x= Price, y= Sales_Total, color = Region)) + geom_point() + geom_smooth(mapping = aes(x = Price, y = Sales_Total, color = Region)) + facet_wrap(~Segment, nrow = 3)
+```
+<p>
+<BP><B>Observations</B>   
+<p>
+1) In Europe, generally customers are not very price sensitive. We could see from the graph that the higher the price, the higher the total sales.   
+<p>
+2) Especially for the consumer segment, in all the 3 regions we could see a smooth line indicating a positive correlation between price and total sales. Especially Northern Europe, when the price reaches above ``2000``, it still brings more sales in. Only in Eastern Europe, when the price is between ``700 and 900``, they have a negative correlation, which means consumers are price sensitive in this price range when purchasing consumer products.  
+<p>
+3) Regarding Corporate products, Northern Europe has a curve, and when the price is between ``700 and 1200``, the buyers will be price sensitive.   
+<p>
+4) Regarding home office, consumers might price-sensitive to several products, but overall, the higher price brought higher sales, especially in Western Europe, we see a long line which nearly reaches ``1500``. In Eastern Europe, there is a short curve around ``500 to 600``, which needs to be careful when setting the price. 
+
+<p><BR>
+<B>6.3 Q3. Segment frequency comparison in different market</B>  
+
+```{r}
+#to create a clustered bar plot
+ggplot(sales2020) + geom_bar(mapping = aes(x = Market, fill = Segment))
+```
+<p>
+<BP><B>Observations</B>  
+<p>
+1) In all the five markets, consumer products have the biggest market size, followed by corporate segment and home office has the smallest market size. 
+<p>
+2) In Asia Pacific, Europe, LATAM, and USCA, the consumer segment has a similar total frequency.  
+<p>
+3) Compare with the Asia Pacific and Europe, LATAM And USCA have a lower frequency of home office segments.  
+<p>
+4) USCA also has a very low frequency of corporate segments.  
+<p>
+5) In Africa, the home office has nearly 0 frequency.   
+
+
+
+<p><BR>
+<FONT SIZE = 4, COLOR="#A11515"><B>
+Conclusion
+</B></FONT>
+<p>
+<FONT SIZE = 3><B>Global Analysis</B></FONT>  
+<p>
+1) The bigger the market size the higher the net sales. Asia Pacific has the best net sales performance, followed by the Europe. USCA and Africa have the lowest net sales. This is consistent with the market frequency. Therefore, we could conclude that the big market size will create more net sales.  
+<p>
+2) Shipping cost and losses will influence the net sales. The shipping costs are narrow globally, mainly in the range of 34 and 46. Therefore the shipping cost have not caused many different in the net sales of different market.   
+<p>
+3) The loss range is relatively spread, from 0 to nearly 12000, the total losses have affected the net sales to make the net sales difference.   
+<p>
+4) Price range is also broad which also influenced the net sales difference in different market and regions.   
+<p>
+5) Consumer Segment has the highest quantity of sales, followed by corporate and home office. This is consistent globally. Consumer segment has the lowest average price, but its total net sales are the highest. Consumer segment is the company's cash cow in 2020. There might be more potential market for home office.     
+<p>
+6) Medium order has the largest proportion followed by high order. These 2 order priorities could satisfy most of the shoppers. These 2 have the lowest average cost, so customers are price sensitive to shipping cost.   
+<p>
+7) Standard class ship mode occupied over 50% of the orders, by checking the numbers, the average standard class ship mode shipping cost is the lowest. Again, customers are price sensitive to shipping cost.   
+<p>
+8) The average price of the 3 segments do not have a big difference. Therefore, the sales quantity would be directly because of the demand of the market.  
+<p>
+9) Generally, Europe market is not price sensitive, and we see a positive correlation between price and total sales. However, we should be careful about Northern and Eastern Europe market for the consumer and corporate segment price setting, since there is some price range, customers are sensitive.  
+
+<p>
+<FONT SIZE = 3><B>Recommendations to the company</B></FONT>    
+<p>
+1) Explore opportunities in the USCA market and Africa market, especially for the corporate and home office segment. If we could find more opportunities in these 2 segments, we could increase the total sales.  
+<p>
+2) Try some free shipping campaigns, which might increase the total sales, since, from analysis, it could be found that globally people are price sensitive to shipping costs. Besides, the ship mode did not cause big losses.  
+<p>
+3) Create a price strategy for the European market, in Western Europe, all the 3 segments could try high-end products to increase sales. In Northern Europe, we also could try more high-end consumer products, while corporate products shall avoid the price of around 1000.   
+<p>
+4) Find out the specific high total loss product and region, and to further analyze the customer satisfaction rate in that region and find the reasons why there are high losses/returns. Also, those regions with very low losses would have high potential with our valuable customers. Find out the specific customers and put more investment on valuable customers.
+
+
+
+<p><BR>
+<FONT SIZE = 4, COLOR="#A11515"><B>
+Bibliography
+</B></FONT>
+
+Farfan, B. (2020). What Is Retail?. The Balance Small Business. Retrieved 28 October 2021, from https://www.thebalancesmb.com/what-is-retail-2892238.
+
+Henderson, B. (1970). The Product Portfolio. BCG Global. Retrieved 30 October 2021, from https://www.bcg.com/publications/1970/strategy-the-product-portfolio.
+
+Kenton, W. (2021). Net Sales. Investopedia. Retrieved 29 October 2021, from https://www.investopedia.com/terms/n/netsales.asp.
+
+Marr, B. (2015). Big Data: A Game Changer In The Retail Sector. Forbes. Retrieved 28 October 2021, from https://www.forbes.com/sites/bernardmarr/2015/11/10/big-data-a-game-changer-in-the-retail-sector/?sh=7ba069b29f37.
+
+Pricing Strategy Guide: 7 Types, Examples, & How to Choose. Profitwell. (2021). Retrieved 29 October 2021, from https://www.profitwell.com/recur/all/pricing-strategy-guide/.
+
+Santoro, G., Fiano, F., Bertoldi, B., & Ciampi, F. (2019). Big data for business management in the retail industry. Management Decision, 57(8), 1980-1992. 
+
+Sides, R., & Swaminathan, N. (2021). 2020 retail industry outlook. Deloitte.
+
+Ying, S., Sindakis, S., Aggarwal, S., Chen, C., & Su, J. (2020). Managing big data in the retail industry of Singapore: Examining the impact on customer satisfaction and organizational performance. European Management Journal, 39(3), 390-400. 
+
