@@ -1,4 +1,4 @@
-# Retail-Industry-Exploratory-Data-Analysis-
+# Retail-Industry-Sales-Data-Exploratory-Data-Analysis
 This project is to analyze the sales performance of a Store Company in 2020. The main purpose is to identify the primary market which has the best sales performance and find the best-performed product segment for different markets, analyze the ship mode and order priority to predict customers’ expectations on delivery. Also, to be more specific, this report will further explore the performance and opportunities in European market. At the end of the report, I also gave several recommendations to the company based on the result of the analysis.
 
 <b>#Data set description </B>
